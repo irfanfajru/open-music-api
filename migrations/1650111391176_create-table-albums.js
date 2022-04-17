@@ -16,6 +16,14 @@ exports.up = (pgm) => {
       type: 'integer',
       notNull: true,
     },
+    createdAt: {
+      type: 'TEXT',
+      notNull: true,
+    },
+    updatedAt: {
+      type: 'TEXT',
+      notNull: true,
+    },
   });
 };
 

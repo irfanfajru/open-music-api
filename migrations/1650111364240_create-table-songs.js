@@ -32,6 +32,14 @@ exports.up = (pgm) => {
       type: 'VARCHAR(22)',
       notNull: false,
     },
+    createdAt: {
+      type: 'TEXT',
+      notNull: true,
+    },
+    updatedAt: {
+      type: 'TEXT',
+      notNull: true,
+    },
   });
 };
 
