@@ -42,7 +42,7 @@ class AlbumsService {
       values: [name, year, updatedAt, id],
     };
     const result = await this._pool.query(query);
-    if (!result.rows.length) {
+    if (!result.rows[0].id) {
       throw new NotFoundError('Album gagal diperbarui.Id tidak ditemukan');
     }
   }
@@ -53,7 +53,7 @@ class AlbumsService {
       values: [id],
     };
     const result = await this._pool.query(query);
-    if (!result.rows.length) {
+    if (!result.rows[0].id) {
       throw new NotFoundError('Album gagal dihapus. Id tidak ditemukan');
     }
   }

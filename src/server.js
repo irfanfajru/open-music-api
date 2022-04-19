@@ -2,7 +2,7 @@ const Hapi = require('@hapi/hapi');
 const songs = require('./api/songs');
 const albums = require('./api/albums');
 const SongsService = require('./services/postgres/SongsService');
-const AlbumsService = require('./services/postgres/AlbumsServices');
+const AlbumsService = require('./services/postgres/AlbumsService');
 const SongsValidator = require('./validator/songs');
 const AlbumValidator = require('./validator/albums');
 require('dotenv').config();
@@ -14,7 +14,7 @@ const init = async () => {
   const server = Hapi.server({
     port: process.env.PORT,
     host: process.env.HOST,
-    route: {
+    routes: {
       cors: {
         origin: ['*'],
       },

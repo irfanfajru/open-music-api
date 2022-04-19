@@ -1,11 +1,14 @@
-const autoBind = require('auto-bind');
 const ClientError = require('../../exceptions/ClientError');
 
 class SongsHandler {
   constructor(service, validator) {
     this._service = service;
     this._validator = validator;
-    autoBind(this);
+    this.postSongHandler = this.postSongHandler.bind(this);
+    this.getSongsHandler = this.getSongsHandler.bind(this);
+    this.getSongByIdHandler = this.getSongByIdHandler.bind(this);
+    this.putSongByIdHandler = this.putSongByIdHandler.bind(this);
+    this.deleteSongByIdHandler = this.deleteSongByIdHandler.bind(this);
   }
 
   async postSongHandler(request, h) {
@@ -60,11 +63,11 @@ class SongsHandler {
     return {
       status: 'success',
       data: {
-        songs: songs.map(song => {
-          song.id,
-            song.title,
-            song.performer,
-        }),
+        songs: songs.map((song) => ({
+          id: song.id,
+          title: song.title,
+          performer: song.performer,
+        })),
       },
     };
   }
@@ -135,7 +138,7 @@ class SongsHandler {
         message: 'Song berhsail dihapus',
       };
     } catch (error) {
-      if (error instanceof clientError) {
+      if (error instanceof ClientError) {
         const response = h.response({
           status: 'fail',
           message: error.message,
