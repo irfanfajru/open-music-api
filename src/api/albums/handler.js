@@ -49,7 +49,11 @@ class AlbumsHandler {
       return {
         status: 'success',
         data: {
-          album,
+          album: {
+            id: album.id,
+            name: album.name,
+            year: album.year,
+          },
         },
       };
     } catch (error) {
@@ -61,7 +65,6 @@ class AlbumsHandler {
         response.code(error.statusCode);
         return response;
       }
-
       // server error
       const response = h.response({
         status: 'error',

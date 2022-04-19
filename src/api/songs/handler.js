@@ -143,9 +143,10 @@ class SongsHandler {
           status: 'fail',
           message: error.message,
         });
-        response.code(500);
+        response.code(error.statusCode);
         return response;
       }
+      console.log(error);
       // server error
       const response = h.response({
         status: 'error',

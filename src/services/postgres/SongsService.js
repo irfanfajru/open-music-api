@@ -8,7 +8,14 @@ class SongsService {
     this._pool = new Pool();
   }
 
-  async addSong({ title, year, genre, performer, duration, albumId }) {
+  async addSong({
+    title,
+    year,
+    genre,
+    performer,
+    duration,
+    albumId,
+  }) {
     const id = `song-${nanoid(16)}`;
     const createdAt = new Date().toISOString();
     const updatedAt = createdAt;
@@ -17,7 +24,7 @@ class SongsService {
       values: [id, title, year, genre, performer, duration, albumId, createdAt, updatedAt],
     };
     const result = await this._pool.query(query);
-    if (!result.rows[0].id) {
+    if (!result.rows.length) {
       throw new InvariantError('Song gagal ditambahkan');
     }
     return result.rows[0].id;
@@ -30,7 +37,7 @@ class SongsService {
 
   async getSongById(id) {
     const query = {
-      test: 'SELECT * FROM songs WHERE id=$1',
+      text: 'SELECT * FROM songs WHERE id=$1',
       values: [id],
     };
     const result = await this._pool.query(query);
@@ -40,11 +47,18 @@ class SongsService {
     return result.rows[0];
   }
 
-  async editSongById(id, { title, year, genre, performer, duration, albumId }) {
+  async editSongById(id, {
+    title,
+    year,
+    genre,
+    performer,
+    duration,
+    albumId,
+  }) {
     const updatedAt = new Date().toISOString();
     const query = {
-      text: 'UPDATE songs SET title=$1,year=$2,genre=$3,performer=$4,duration=$5,albumId=$6,updatedAt=$7 WHERE id=$8 RETURNING id',
-      values: [title, year, genre, performer, duration, albumId, id],
+      text: 'UPDATE songs SET title=$1,year=$2,genre=$3,performer=$4,duration=$5,album_id=$6,updated_at=$7 WHERE id=$8 RETURNING id',
+      values: [title, year, genre, performer, duration, albumId, updatedAt, id],
     };
     const result = await this._pool.query(query);
     if (!result.rows.length) {
