@@ -78,6 +78,33 @@ class SongsService {
       throw new NotFoundError('Song gagal dihapus. Id tidak ditemukan');
     }
   }
+
+  async getSongsByTitle(title) {
+    const query = {
+      text: 'SELECT * FROM songs WHERE title ILIKE $1',
+      values: [`%${title}%`],
+    };
+    const result = await this._pool.query(query);
+    return result.rows.map(songsModel);
+  }
+
+  async getSongsByPerformer(performer) {
+    const query = {
+      text: 'SELECT * FROM songs WHERE performer ILIKE $1',
+      values: [`%${performer}%`],
+    };
+    const result = await this._pool.query(query);
+    return result.rows.map(songsModel);
+  }
+
+  async getSongsByTitleAndPerformer(title, performer) {
+    const query = {
+      text: 'SELECT * FROM songs WHERE (title ILIKE $1) AND (performer ILIKE $2)',
+      values: [`%${title}%`, `%${performer}%`],
+    };
+    const result = await this._pool.query(query);
+    return result.rows.map(songsModel);
+  }
 }
 
 module.exports = SongsService;

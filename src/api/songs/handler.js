@@ -59,13 +59,25 @@ class SongsHandler {
   }
 
   async getSongsHandler(request, h) {
-    const songs = await this._service.getSongs();
-    return {
+    const { title, performer } = request.query;
+    let songs = [];
+    if (title !== undefined && performer !== undefined) {
+      songs = await this._service.getSongsByTitleAndPerformer(title, performer);
+    } else if (title !== undefined) {
+      songs = await this._service.getSongsByTitle(title);
+    } else if (performer !== undefined) {
+      songs = await this._service.getSongsByPerformer(performer);
+    } else {
+      songs = await this._service.getSongs();
+    }
+    const response = h.response({
       status: 'success',
       data: {
         songs,
       },
-    };
+    });
+    response.code(200);
+    return response;
   }
 
   async getSongByIdHandler(request, h) {
