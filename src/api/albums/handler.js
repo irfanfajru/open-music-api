@@ -49,11 +49,7 @@ class AlbumsHandler {
       return {
         status: 'success',
         data: {
-          album: {
-            id: album.id,
-            name: album.name,
-            year: album.year,
-          },
+          album,
         },
       };
     } catch (error) {
