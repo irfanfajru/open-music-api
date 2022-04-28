@@ -28,7 +28,7 @@ const init = async () => {
   }]);
 
   // definisi strategi autentikasi Jwt
-  server.auth.strategy('openmusicapi_jwt', 'jwt', {
+  server.auth.strategy('openmusic_jwt', 'jwt', {
     keys: process.env.ACCESS_TOKEN_KEY,
     verify: {
       aud: false,
