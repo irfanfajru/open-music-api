@@ -1,4 +1,5 @@
 const Hapi = require('@hapi/hapi');
+const Jwt = require('@hapi/jwt');
 const songs = require('./api/songs');
 const albums = require('./api/albums');
 const SongsService = require('./services/postgres/SongsService');
@@ -19,6 +20,28 @@ const init = async () => {
         origin: ['*'],
       },
     },
+  });
+
+  // register plugin jwt
+  await server.register([{
+    plugin: Jwt,
+  }]);
+
+  // definisi strategi autentikasi Jwt
+  server.auth.strategy('openmusicapi_jwt', 'jwt', {
+    keys: process.env.ACCESS_TOKEN_KEY,
+    verify: {
+      aud: false,
+      iss: false,
+      sub: false,
+      masAgeSec: process.env.ACCESS_TOKEN_AGE,
+    },
+    validate: (artifacts) => ({
+      isValid: true,
+      credentials: {
+        id: artifacts.decoded.payload.id,
+      },
+    }),
   });
 
   await server.register([
