@@ -10,7 +10,7 @@ const routes = (handler) => [
     handler: handler.putAuthenticationHandler,
   },
   {
-    mehtod: 'DELETE',
+    method: 'DELETE',
     path: '/authentications',
     handler: handler.deleteAuthenticationHandler,
   },
