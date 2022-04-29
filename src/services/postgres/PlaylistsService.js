@@ -34,7 +34,7 @@ class PlaylistsService {
   async getPlaylistById(playlistId) {
     const query = {
       text: 'SELECT playlists.*,users.username FROM playlists LEFT JOIN users ON playlists.owner=users.id where playlists.id=$1',
-      valued: [playlistId],
+      values: [playlistId],
     };
     const result = await this._pool.query(query);
     if (!result.rows.length) {
@@ -44,8 +44,15 @@ class PlaylistsService {
   }
 
   async verifyPlaylistOwner(playlistId, credentialId) {
-    const playlist = await this.getPlaylistById(playlistId);
-    if (playlist.owner !== credentialId) {
+    const query = {
+      text: 'SELECT * FROM playlists WHERE id=$1',
+      values: [playlistId],
+    };
+    const result = await this._pool.query(query);
+    if (!result.rows.length) {
+      throw new NotFoundError('Playlist tidak ditemukan');
+    }
+    if (result.rows[0].owner !== credentialId) {
       throw new AuthorizationError('Anda tidak berhak mengakses playlist ini');
     }
   }
@@ -84,14 +91,14 @@ class PlaylistsService {
       id: playlist.id,
       name: playlist.name,
       username: playlist.username,
-      songs,
+      songs: songs.rows,
     };
     return result;
   }
 
   async deletePlaylistSong(playlistId, songId) {
     const query = {
-      text: 'DELETE FROM playlist_songs WHERE playlist_id=$1 AND song_id=$1 RETURNING id',
+      text: 'DELETE FROM playlist_songs WHERE playlist_id=$1 AND song_id=$2 RETURNING id',
       values: [playlistId, songId],
     };
     const result = await this._pool.query(query);
