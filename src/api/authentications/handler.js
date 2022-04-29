@@ -1,5 +1,4 @@
 const ClientError = require('../../exceptions/ClientError');
-const ServerErrorResponse = require('../../utils/ServerErrorResponse');
 
 class AuthenticationsHandler {
   constructor(authenticationsService, usersService, tokenManager, validator) {
@@ -42,7 +41,12 @@ class AuthenticationsHandler {
       }
 
       // server Error
-      return ServerErrorResponse(h);
+      const response = h.response({
+        status: 'error',
+        message: 'Maaf, terjadi kegagalan pada server kami.',
+      });
+      response.code(500);
+      return response;
     }
   }
 
@@ -70,7 +74,12 @@ class AuthenticationsHandler {
       }
 
       // server error
-      return ServerErrorResponse(h);
+      const response = h.response({
+        status: 'error',
+        message: 'Maaf, terjadi kegagalan pada server kami.',
+      });
+      response.code(500);
+      return response;
     }
   }
 
@@ -95,7 +104,12 @@ class AuthenticationsHandler {
         return response;
       }
       // server Error
-      return ServerErrorResponse(h);
+      const response = h.response({
+        status: 'error',
+        message: 'Maaf, terjadi kegagalan pada server kami.',
+      });
+      response.code(500);
+      return response;
     }
   }
 }

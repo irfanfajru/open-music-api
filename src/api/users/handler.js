@@ -1,5 +1,4 @@
 const ClientError = require('../../exceptions/ClientError');
-const ServerErrorResponse = require('../../utils/ServerErrorResponse');
 
 class UsersHandler {
   constructor(service, validator) {
@@ -33,7 +32,12 @@ class UsersHandler {
       }
       // server Error
       console.error(error);
-      return ServerErrorResponse(h);
+      const response = h.response({
+        status: 'error',
+        message: 'Maaf, terjadi kegagalan pada server kami.',
+      });
+      response.code(500);
+      return response;
     }
   }
 }
