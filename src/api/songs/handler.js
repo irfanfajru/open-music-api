@@ -48,6 +48,7 @@ class SongsHandler {
         response.code(error.statusCode);
         return response;
       }
+      console.error(error);
       // server error
       const response = h.response({
         status: 'error',
