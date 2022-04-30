@@ -36,7 +36,6 @@ class CollaborationsHandler {
         response.code(error.statusCode);
         return response;
       }
-
       // server Error
       const response = h.response({
         status: 'error',
@@ -49,7 +48,7 @@ class CollaborationsHandler {
 
   async deleteCollaborationHandler(request, h) {
     try {
-      await this._validator.validatePostCollaborationPayload(request.payload);
+      await this._validator.validateDeleteCollaborationPayload(request.payload);
       const { playlistId, userId } = request.payload;
       const { userId: owner } = request.auth.credentials;
       await this._playlistsService.verifyPlaylistOwner(playlistId, owner);

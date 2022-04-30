@@ -59,15 +59,20 @@ class PlaylistsService {
 
   async verifyPlaylistAccess(playlistId, credentialId) {
     const query = {
-      text: 'SELECT playlists.id,playlists.owner,collaborations.user_id as collaborator_id FROM playlists LEFT JOIN collaborations ON playlists.id = collaborations.playlist_id WHERE playlists.id =$1',
+      text: 'SELECT playlists.id,playlists.owner,collaborations.user_id as collaborator FROM playlists LEFT JOIN collaborations ON playlists.id = collaborations.playlist_id WHERE playlists.id =$1',
       values: [playlistId],
     };
     const result = await this._pool.query(query);
     if (!result.rows.length) {
       throw new NotFoundError('Playlist tidak ditemukan');
     }
-
-    if (result.rows[0].owner !== credentialId || result.rows[0].collaborator_id !== credentialId) {
+    const { owner, collaborator } = result.rows[0];
+    if (collaborator === null) {
+      if (owner !== credentialId) {
+        throw new AuthorizationError('Anda tidak berhak mengakses playlist ini');
+      }
+    }
+    if (owner !== credentialId && collaborator !== credentialId) {
       throw new AuthorizationError('Anda tidak berhak mengakses playlist ini');
     }
   }

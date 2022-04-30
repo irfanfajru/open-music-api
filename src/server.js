@@ -112,7 +112,7 @@ const init = async () => {
         playlistsService,
         usersService,
         collaborationsService,
-        CollaborationsValidator,
+        validator: CollaborationsValidator,
       },
     },
   ]);
