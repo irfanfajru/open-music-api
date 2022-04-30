@@ -22,10 +22,10 @@ class PlaylistsService {
     return result.rows[0].id;
   }
 
-  async getPlaylists(owner) {
+  async getPlaylists(userId) {
     const query = {
-      text: 'SELECT playlists.id,playlists.name,users.username FROM  playlists LEFT JOIN users ON users.id=playlists.owner WHERE playlists.owner=$1',
-      values: [owner],
+      text: 'SELECT playlists.id,playlists.name,users.username FROM playlists LEFT JOIN users ON playlists.owner=users.id LEFT JOIN collaborations ON playlists.id=collaborations.playlist_id WHERE collaborations.user_id =$1 OR playlists.owner=$1',
+      values: [userId],
     };
     const result = await this._pool.query(query);
     return result.rows;
@@ -53,6 +53,21 @@ class PlaylistsService {
       throw new NotFoundError('Playlist tidak ditemukan');
     }
     if (result.rows[0].owner !== credentialId) {
+      throw new AuthorizationError('Anda tidak berhak mengakses playlist ini');
+    }
+  }
+
+  async verifyPlaylistAccess(playlistId, credentialId) {
+    const query = {
+      text: 'SELECT playlists.id,playlists.owner,collaborations.user_id as collaborator_id FROM playlists LEFT JOIN collaborations ON playlists.id = collaborations.playlist_id WHERE playlists.id =$1',
+      values: [playlistId],
+    };
+    const result = await this._pool.query(query);
+    if (!result.rows.length) {
+      throw new NotFoundError('Playlist tidak ditemukan');
+    }
+
+    if (result.rows[0].owner !== credentialId || result.rows[0].collaborator_id !== credentialId) {
       throw new AuthorizationError('Anda tidak berhak mengakses playlist ini');
     }
   }
