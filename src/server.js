@@ -25,6 +25,10 @@ const UsersValidator = require('./validator/users');
 const collaborations = require('./api/collaborations');
 const CollaborationsService = require('./services/postgres/CollaborationsService');
 const CollaborationsValidator = require('./validator/collaborations');
+// Exports
+const _exports = require('./api/exports');
+const ProducerService = require('./services/rabbitmq/ProducerService');
+const ExportsValidator = require('./validator/exports');
 require('dotenv').config();
 
 const init = async () => {
@@ -113,6 +117,14 @@ const init = async () => {
         usersService,
         collaborationsService,
         validator: CollaborationsValidator,
+      },
+    },
+    {
+      plugin: _exports,
+      options: {
+        playlistsService,
+        service: ProducerService,
+        validator: ExportsValidator,
       },
     },
   ]);
