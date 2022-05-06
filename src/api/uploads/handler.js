@@ -16,7 +16,7 @@ class UploadsHandler {
       const prevCover = await this._albumsService.getCoverAlbum(id);
       const filename = await this._service.writeFile(cover, cover.hapi);
       if (prevCover !== null) {
-        this._service.deleteFile(filename);
+        await this._service.deleteFile(prevCover);
       }
       await this._albumsService.editCoverAlbum(id, filename);
       const response = h.response({
