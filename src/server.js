@@ -35,6 +35,9 @@ const ExportsValidator = require('./validator/exports');
 const uploads = require('./api/uploads');
 const StorageService = require('./services/storage/StorageService');
 const UploadsValidator = require('./validator/uploads');
+// album likes
+const albumlikes = require('./api/albumlikes');
+const AlbumsLikesService = require('./services/postgres/AlbumsLikesService');
 require('dotenv').config();
 
 const init = async () => {
@@ -45,6 +48,7 @@ const init = async () => {
   const usersService = new UsersService();
   const collaborationsService = new CollaborationsService();
   const storageService = new StorageService(path.resolve(__dirname, 'api/uploads/file/images'));
+  const albumsLikesService = new AlbumsLikesService();
 
   const server = Hapi.server({
     port: process.env.PORT,
@@ -145,6 +149,13 @@ const init = async () => {
         albumsService,
         service: storageService,
         validator: UploadsValidator,
+      },
+    },
+    {
+      plugin: albumlikes,
+      options: {
+        albumsService,
+        service: albumsLikesService,
       },
     },
   ]);
