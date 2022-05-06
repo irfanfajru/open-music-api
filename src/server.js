@@ -38,6 +38,8 @@ const UploadsValidator = require('./validator/uploads');
 // album likes
 const albumlikes = require('./api/albumlikes');
 const AlbumsLikesService = require('./services/postgres/AlbumsLikesService');
+// cache
+const CacheService = require('./services/redis/CacheService');
 require('dotenv').config();
 
 const init = async () => {
@@ -48,7 +50,8 @@ const init = async () => {
   const usersService = new UsersService();
   const collaborationsService = new CollaborationsService();
   const storageService = new StorageService(path.resolve(__dirname, 'api/uploads/file/images'));
-  const albumsLikesService = new AlbumsLikesService();
+  const cacheService = new CacheService();
+  const albumsLikesService = new AlbumsLikesService(cacheService);
 
   const server = Hapi.server({
     port: process.env.PORT,

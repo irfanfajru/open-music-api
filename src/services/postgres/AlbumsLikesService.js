@@ -3,8 +3,9 @@ const { nanoid } = require('nanoid');
 const InvariantError = require('../../exceptions/InvariantError');
 
 class AlbumsLikesService {
-  constructor() {
+  constructor(cacheService) {
     this._pool = new Pool();
+    this._cacheService = cacheService;
   }
 
   async addOrdeleteAlbumLikeIfExists(albumId, userId) {
@@ -13,7 +14,7 @@ class AlbumsLikesService {
       values: [userId, albumId],
     };
     const result = await this._pool.query(query);
-
+    await this._cacheService.delete(`albumlikes:${albumId}`);
     if (!result.rows.length) {
       const id = `album-like-${nanoid(16)}`;
       const queryAdd = {
@@ -39,12 +40,25 @@ class AlbumsLikesService {
   }
 
   async getAlbumLikes(albumId) {
-    const query = {
-      text: 'SELECT * FROM user_album_likes WHERE album_id=$1',
-      values: [albumId],
-    };
-    const result = await this._pool.query(query);
-    return result.rows.length;
+    try {
+      const result = await this._cacheService.get(`albumlikes:${albumId}`);
+      return JSON.parse(result);
+    } catch (error) {
+      const query = {
+        text: 'SELECT * FROM user_album_likes WHERE album_id=$1',
+        values: [albumId],
+      };
+      const result = await this._pool.query(query);
+      const mappedResult = {
+        likes: result.rows.length,
+        isFromCache: true,
+      };
+      await this._cacheService.set(`albumlikes:${albumId}`, JSON.stringify(mappedResult));
+      return {
+        likes: result.rows.length,
+        isFromCache: false,
+      };
+    }
   }
 }
 
